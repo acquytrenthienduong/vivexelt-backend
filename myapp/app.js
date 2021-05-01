@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 
 // var indexRouter = require('./routes/index');
 var indexRouter = require('./routes/index');
+var postRouter = require('./routes/post');
 
 var app = express();
 const db = require("./model/index");
@@ -26,6 +27,7 @@ app.use(bodyParser.json());
 db.sequelize.sync();
 
 app.use('/', indexRouter);
+app.use('/post', postRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

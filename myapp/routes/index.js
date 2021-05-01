@@ -3,30 +3,28 @@ var router = express.Router();
 const jwt = require('jsonwebtoken');
 const db = require("../model/index");
 const User = db.user;
-const Post = db.post;
 const bcrypt = require('bcrypt');
-
-const accessTokenSecret = 'youraccesstokensecret';
+const middleware = require('./middleware');
+// const accessTokenSecret = 'youraccesstokensecret';
 
 function generateAccessToken(username) {
-  return jwt.sign(username, accessTokenSecret, { expiresIn: '7d' });
+  return jwt.sign(username, middleware.accessTokenSecret, { expiresIn: '7d' });
 }
 
-const authenticateJWT = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+// const authenticateJWT = (req, res, next) => {
+//   const authHeader = req.headers['authorization'];
+//   const token = authHeader && authHeader.split(' ')[1];
 
-  if (token == null) return res.sendStatus(401)
+//   if (token == null) return res.sendStatus(401)
 
-  jwt.verify(token, accessTokenSecret, (err, user) => {
-    if (err) return res.sendStatus(403)
-    req.user = user
-    next()
-  })
+//   jwt.verify(token, accessTokenSecret, (err, user) => {
+//     if (err) return res.sendStatus(403)
+//     req.user = user
+//     next()
+//   })
+// };
 
-};
-
-router.get('/', authenticateJWT, function (req, res, next) {
+router.get('/', middleware.authenticateJWT, function (req, res, next) {
   User.findAll()
     .then((data) => {
       res.status(200).send(data);
@@ -92,92 +90,5 @@ router.post('/create', (req, res) => {
         });
     })
 })
-
-router.get('/getOnePost/:id', authenticateJWT, function (req, res, next) {
-  const id = req.params.id
-  Post.findByPk(id)
-    .then(data => {
-      res.status(200).send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error retrieving post with id=" + id
-      });
-    });
-});
-
-router.get('/getAllPost', authenticateJWT, function (req, res, next) {
-  Post.findAll()
-    .then((data) => {
-      res.status(200).send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while post"
-      });
-    });
-});
-
-router.post('/createPost', authenticateJWT, function (req, res, next) {
-  let post = {
-    title: req.body.title,
-    description: req.body.description,
-    linkvideo: req.body.linkvideo,
-  }
-
-  Post.create(post)
-    .then(() => {
-      res.status(200).send({ message: 'create success' });
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the post."
-      });
-    });
-});
-
-router.post('/updatePost/:id', authenticateJWT, function (req, res, next) {
-  const id = req.params.id;
-  Post.update(req.body.post, {
-    where: { id: id }
-  })
-    .then(num => {
-      if (num == 1) {
-        res.send({
-          message: "Post was updated successfully."
-        });
-      } else {
-        res.send({
-          message: `Cannot update Post with id=${id}. Maybe Post was not found or req.body is empty!`
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error updating Post with id=" + id
-      });
-    });
-});
-
-router.post('/deletePost/:id', authenticateJWT, function (req, res, next) {
-  const id = req.params.id;
-  Post.destroy({
-    where: { id: id }
-  })
-    .then((rowDeleted) => { // rowDeleted will return number of rows deleted
-      if (rowDeleted === 1) {
-        res.send({
-          message: "Post was deleted."
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error delete Post with id=" + id
-      });
-    });
-});
 
 module.exports = router;

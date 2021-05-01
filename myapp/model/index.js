@@ -56,6 +56,7 @@ db.sequelize = sequelize;
 
 db.user = require("./user")(sequelize, Sequelize);
 db.post = require("./post")(sequelize, Sequelize);
+db.image = require("./image")(sequelize, Sequelize);
 
 
 module.exports = db;

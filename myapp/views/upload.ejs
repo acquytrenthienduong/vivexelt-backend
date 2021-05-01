@@ -1,0 +1,21 @@
+<form method="POST" action="image/upload-one" enctype="multipart/form-data">
+    <div>
+        <label>Select your profile picture:</label>
+        <input type="file" name="profile_pic" />
+    </div>
+    <div>
+        <input type="submit" name="btn_upload_profile_pic" value="Upload" />
+    </div>
+</form>
+
+<form method="POST" action="image/upload-multiple" enctype="multipart/form-data">
+    <div>
+        <label>Select multiple images:</label>
+        <input type="file" name="multiple_images" multiple />
+    </div>
+    <div>
+        <input type="submit" name="btn_upload_multiple_images" value="Upload" />
+    </div>
+
+    <img src="images\profile_pic-1619853567174.jpg" width="300" style="margin-right: 20px;">
+</form>

@@ -5,12 +5,16 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
+var cors = require('cors')
+const multer = require("multer");
 
 // var indexRouter = require('./routes/index');
 var indexRouter = require('./routes/index');
 var postRouter = require('./routes/post');
+var imageRouter = require('./routes/image');
 
 var app = express();
+
 const db = require("./model/index");
 
 // view engine setup
@@ -22,12 +26,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(bodyParser.json());
+app.use(cors());
 
 db.sequelize.sync();
 
 app.use('/', indexRouter);
 app.use('/post', postRouter);
+app.use('/image', imageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

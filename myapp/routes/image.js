@@ -24,12 +24,37 @@ router.get('/', function (req, res, next) {
     res.render('upload.ejs');
 });
 
+router.get('/getOne/:id', middleware.authenticateJWT, function (req, res, next) {
+    const id = req.params.id
+    Image.findByPk(id)
+        .then(data => {
+            res.status(200).send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error retrieving image with id=" + id
+            });
+        });
+});
+
+router.get('/getAllImage', middleware.authenticateJWT, function (req, res, next) {
+    Image.findAll()
+        .then((data) => {
+            res.status(200).send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while Image"
+            });
+        });
+});
+
 
 
 router.post('/upload-one', (req, res) => {
     // 'profile_pic' is the name of our file input field in the HTML form
     let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('profile_pic');
-    console.log(req.file);
     upload(req, res, function (err) {
         // req.file contains information of uploaded file
         // req.body contains information of text fields, if there were any
@@ -48,20 +73,20 @@ router.post('/upload-one', (req, res) => {
         }
 
         // Display uploaded image for user validation
-        console.log('xxx', req.file.path.slice(7));
-        // let image = {
-        //     path: req.file.path.slice(7)
-        // }
-        // Image.create(image)
-        //     .then(() => {
-        //         res.status(200).send({ message: 'create success' });
 
-        //     }).catch((err) => {
-        //         res.status(500).send({
-        //             message:
-        //                 err.message || "Some error occurred while creating the post."
-        //         });
-        //     });
+        let image = {
+            path: req.file.path
+        }
+        Image.create(image)
+            .then(() => {
+                res.status(200).send({ message: 'create success' });
+
+            }).catch((err) => {
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the post."
+                });
+            });
         res.send(`You have uploaded this image: <hr/><img src="${req.file.path.slice(7)}" width="500"><hr /><a href="./">Upload another image</a>`);
     });
 });
@@ -88,19 +113,19 @@ router.post('/upload-multiple', (req, res) => {
 
         // Loop through all the uploaded images and display them on frontend
         for (index = 0, len = files.length; index < len; ++index) {
-            // let image = {
-            //     path: files[index].path.slice(7)
-            // }
-            // Image.create(image)
-            //     .then(() => {
-            //         res.status(200).send({ message: 'create success' });
+            let image = {
+                path: files[index].path
+            }
+            Image.create(image)
+                .then(() => {
+                    res.status(200).send({ message: 'create success' });
 
-            //     }).catch((err) => {
-            //         res.status(500).send({
-            //             message:
-            //                 err.message || "Some error occurred while creating the post."
-            //         });
-            //     });
+                }).catch((err) => {
+                    res.status(500).send({
+                        message:
+                            err.message || "Some error occurred while creating the post."
+                    });
+                });
             result += `<img src="${files[index].path.slice(7)}" width="300" style="margin-right: 20px;">`;
         }
         result += '<hr/><a href="./">Upload more images</a>';
@@ -108,4 +133,45 @@ router.post('/upload-multiple', (req, res) => {
     });
 });
 
+router.post('/updateImage/:id', middleware.authenticateJWT, function (req, res, next) {
+    const id = req.params.id;
+    Image.update(req.body.image, {
+        where: { id: id }
+    })
+        .then(num => {
+            if (num == 1) {
+                res.send({
+                    message: "Image was updated successfully."
+                });
+            } else {
+                res.send({
+                    message: `Cannot update Image with id=${id}. Maybe Image was not found or req.body is empty!`
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error updating Image with id=" + id
+            });
+        });
+});
+
+router.post('/deleteImage/:id', middleware.authenticateJWT, function (req, res, next) {
+    const id = req.params.id;
+    Image.destroy({
+        where: { id: id }
+    })
+        .then((rowDeleted) => { // rowDeleted will return number of rows deleted
+            if (rowDeleted === 1) {
+                res.send({
+                    message: "Image was deleted."
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error delete Image with id=" + id
+            });
+        });
+});
 module.exports = router;

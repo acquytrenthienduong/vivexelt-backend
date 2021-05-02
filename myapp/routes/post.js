@@ -14,7 +14,10 @@ router.get('/getOnePost/:id', middleware.authenticateJWT, function (req, res, ne
   const id = req.params.id
   Post.findByPk(id)
     .then(data => {
-      res.status(200).send(data);
+      res.json({
+        success: true,
+        post: data
+      });
     })
     .catch(err => {
       res.status(500).send({
@@ -64,19 +67,22 @@ router.post('/createPost', middleware.authenticateJWT, function (req, res, next)
     });
 });
 
-router.post('/updatePost/:id', middleware.authenticateJWT, function (req, res, next) {
+router.put('/updatePost/:id', middleware.authenticateJWT, function (req, res, next) {
   const id = req.params.id;
-  Post.update(req.body.post, {
+  console.log(req.body);
+  Post.update(req.body, {
     where: { id: id }
   })
     .then(num => {
       if (num == 1) {
-        res.send({
-          message: "Post was updated successfully."
+        res.json({
+          success: true,
+          message: "create success"
         });
       } else {
-        res.send({
-          message: `Cannot update Post with id=${id}. Maybe Post was not found or req.body is empty!`
+        res.json({
+          success: false,
+          message: `Cannot update Post with id=${id}. Maybe Post was not found or req.body is empty! or the same`
         });
       }
     })
@@ -94,8 +100,9 @@ router.post('/deletePost/:id', middleware.authenticateJWT, function (req, res, n
   })
     .then((rowDeleted) => { // rowDeleted will return number of rows deleted
       if (rowDeleted === 1) {
-        res.send({
-          message: "Post was deleted."
+        res.json({
+          success: true,
+          message: 'delete success'
         });
       }
     })
@@ -119,7 +126,10 @@ router.get('/search/:keyword', middleware.authenticateJWT, function (req, res, n
     }
   )
     .then((data) => {
-      res.status(200).send(data);
+      res.json({
+        success: true,
+        posts: data
+      });
     })
     .catch(err => {
       res.status(500).send({

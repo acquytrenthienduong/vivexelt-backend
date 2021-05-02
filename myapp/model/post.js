@@ -8,11 +8,20 @@ module.exports = (sequelize, Sequelize) => {
         title: {
             type: Sequelize.STRING
         },
-        description: {
+        short_description: {
             type: Sequelize.STRING
         },
-        linkvideo: {
+        long_description: {
             type: Sequelize.STRING
+        },
+        image_thumbnail: {
+            type: Sequelize.STRING
+        },
+        seoTitle: {
+            type: Sequelize.STRING
+        },
+        createAt: {
+            type: Sequelize.DATE
         }
     }, {
         sequelize,

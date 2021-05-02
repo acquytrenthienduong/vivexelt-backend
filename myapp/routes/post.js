@@ -3,6 +3,7 @@ var router = express.Router();
 const middleware = require('./middleware');
 const db = require("../model/index");
 const Post = db.post;
+const Op = db.Sequelize.Op;
 
 /* GET home page. */
 router.get('/', middleware.authenticateJWT, function (req, res, next) {
@@ -25,7 +26,10 @@ router.get('/getOnePost/:id', middleware.authenticateJWT, function (req, res, ne
 router.get('/getAllPost', middleware.authenticateJWT, function (req, res, next) {
   Post.findAll()
     .then((data) => {
-      res.status(200).send(data);
+      res.json({
+        success: true,
+        posts: data
+      });
     })
     .catch(err => {
       res.status(500).send({
@@ -38,13 +42,19 @@ router.get('/getAllPost', middleware.authenticateJWT, function (req, res, next) 
 router.post('/createPost', middleware.authenticateJWT, function (req, res, next) {
   let post = {
     title: req.body.title,
-    description: req.body.description,
-    linkvideo: req.body.linkvideo,
+    short_description: req.body.short_description,
+    long_description: req.body.long_description,
+    image_thumbnail: req.body.image_thumbnail,
+    seoTitle: req.body.seoTitle,
+    createAt: Date.now()
   }
 
   Post.create(post)
     .then(() => {
-      res.status(200).send({ message: 'create success' });
+      res.json({
+        success: true,
+        message: "create success"
+      });
     })
     .catch(err => {
       res.status(500).send({
@@ -92,6 +102,29 @@ router.post('/deletePost/:id', middleware.authenticateJWT, function (req, res, n
     .catch(err => {
       res.status(500).send({
         message: "Error delete Post with id=" + id
+      });
+    });
+});
+
+router.get('/search/:keyword', middleware.authenticateJWT, function (req, res, next) {
+  let keyword = req.params.keyword
+
+  Post.findAll(
+    {
+      where: {
+        seoTitle: {
+          [Op.like]: '%' + keyword + '%'
+        }
+      }
+    }
+  )
+    .then((data) => {
+      res.status(200).send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while searching the post."
       });
     });
 });

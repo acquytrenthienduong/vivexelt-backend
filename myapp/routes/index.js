@@ -39,12 +39,15 @@ router.get('/', middleware.authenticateJWT, function (req, res, next) {
 
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
+  console.log('req.body', req.body);
+  console.log('username', req.body.username);
+  console.log('password', req.body.password);
 
   User.findOne({ where: { username: username } })
     .then(data => {
       if (!data) {
         res.status(401).send({
-          message: "not found."
+          message: "account not found"
         });
       }
 
@@ -52,13 +55,14 @@ router.post('/login', (req, res) => {
         .then((valid) => {
           if (!valid) {
             res.status(402).send({
-              message: "not found"
+              message: "incorrect password"
             });
           }
           else {
             // Generate an access token
             const token = generateAccessToken({ username: username });
             res.json({
+              success: true,
               token
             });
           }

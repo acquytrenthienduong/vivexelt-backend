@@ -65,7 +65,7 @@ router.get('/getAllImage', middleware.authenticateJWT, function (req, res, next)
 
 router.post('/upload-one', (req, res) => {
     // 'profile_pic' is the name of our file input field in the HTML form
-    let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('profile_pic');
+    let upload = multer({ storage: storage, fileFilter: helpers.imageFilter, limits: { fileSize: 2 * 1024 * 1024 } }).single('profile_pic');
     upload(req, res, function (err) {
 
         if (req.fileValidationError) {
@@ -104,7 +104,7 @@ router.post('/upload-one', (req, res) => {
 router.post('/upload-multiple', (req, res) => {
     // 10 is the limit I've defined for number of uploaded files at once
     // 'multiple_images' is the name of our file input field
-    let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).array('multiple_images', 10);
+    let upload = multer({ storage: storage, fileFilter: helpers.imageFilter, limits: { fileSize: 2 * 1024 * 1024 } }).array('multiple_images', 10);
 
     upload(req, res, function (err) {
         if (req.fileValidationError) {
@@ -145,7 +145,7 @@ router.post('/upload-multiple', (req, res) => {
 
 router.put('/updateImage/:id', middleware.authenticateJWT, function (req, res, next) {
     const id = req.params.id;
-    let upload = multer({ storage: storage }).single('profile_pic');
+    let upload = multer({ storage: storage, limits: { fileSize: 2 * 1024 * 1024 } }).single('profile_pic');
     upload(req, res, function (err) {
         if (req.fileValidationError) {
             return res.send(req.fileValidationError);

@@ -95,7 +95,9 @@ router.get('/getAllPost/:page/:limit', middleware.authenticateJWT, function (req
 
 
 router.post('/createPost', function (req, res, next) {
-  let upload = multer({ storage: storage }).single('profile_pic');
+  let upload = multer({
+    storage: storage, limits: { fileSize: 2 * 1024 * 1024 }
+  }).single('profile_pic');
   upload(req, res, function (err) {
     if (req.fileValidationError) {
       return res.send(req.fileValidationError);
@@ -139,7 +141,7 @@ router.post('/createPost', function (req, res, next) {
 
 router.put('/updatePost/:id', middleware.authenticateJWT, function (req, res, next) {
   const id = req.params.id;
-  let upload = multer({ storage: storage }).single('profile_pic');
+  let upload = multer({ storage: storage, limits: { fileSize: 2 * 1024 * 1024 } }).single('profile_pic');
   upload(req, res, function (err) {
     if (req.fileValidationError) {
       return res.send(req.fileValidationError);

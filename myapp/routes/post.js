@@ -198,4 +198,17 @@ router.get('/search/:keyword', middleware.authenticateJWT, function (req, res, n
     });
 });
 
+router.get('/sendImagePost/:id', function (req, res, next) {
+  const id = req.params.id
+  Post.findByPk(id)
+      .then(data => {
+          res.sendFile(__dirname.replace('routes', data.image_thumbnail));
+      })
+      .catch(err => {
+          res.status(500).send({
+              message: "Error retrieving image with id=" + id
+          });
+      });
+});
+
 module.exports = router;

@@ -40,13 +40,47 @@ router.get('/getOnePost/:id', middleware.authenticateJWT, function (req, res, ne
     });
 });
 
-router.get('/getAllPost', middleware.authenticateJWT, function (req, res, next) {
-  Post.findAll()
+router.get('/getAllPost/:page/:limit', middleware.authenticateJWT, function (req, res, next) {
+  const page = req.params.page
+  const limit = req.params.limit
+
+  console.log('page', page);
+  console.log('limit', limit);
+
+  var offset = 0;
+  if (parseInt(page, 10) < 2) {
+    offset = 0;
+  }
+  else {
+    offset = parseInt(page, 10) - 1;
+  }
+  console.log('offset', offset);
+
+  Post.findAll({})
     .then((data) => {
-      res.json({
-        success: true,
-        posts: data
-      });
+      const length = data.length
+      Post.findAll(
+        {
+          offset: offset * parseInt(limit, 10),
+          limit: parseInt(limit, 10),
+          order: [
+            ['createAt', 'DESC'],
+          ],
+        }
+      )
+        .then((data) => {
+          res.json({
+            success: true,
+            total: length,
+            posts: data
+          });
+        })
+        .catch(err => {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while post"
+          });
+        });
     })
     .catch(err => {
       res.status(500).send({
@@ -54,6 +88,9 @@ router.get('/getAllPost', middleware.authenticateJWT, function (req, res, next) 
           err.message || "Some error occurred while post"
       });
     });
+
+
+
 });
 
 
@@ -201,14 +238,14 @@ router.get('/search/:keyword', middleware.authenticateJWT, function (req, res, n
 router.get('/sendImagePost/:id', function (req, res, next) {
   const id = req.params.id
   Post.findByPk(id)
-      .then(data => {
-          res.sendFile(__dirname.replace('routes', data.image_thumbnail));
-      })
-      .catch(err => {
-          res.status(500).send({
-              message: "Error retrieving image with id=" + id
-          });
+    .then(data => {
+      res.sendFile(__dirname.replace('routes', data.image_thumbnail));
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error retrieving image with id=" + id
       });
+    });
 });
 
 module.exports = router;

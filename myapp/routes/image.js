@@ -43,8 +43,13 @@ router.get('/getOne/:id', middleware.authenticateJWT, function (req, res, next) 
 });
 
 router.get('/getAllImage', middleware.authenticateJWT, function (req, res, next) {
-    Image.findAll()
+    Image.findAll({
+        order: [
+            ['position', 'ASC'],
+        ],
+    })
         .then((data) => {
+
             res.json({
                 success: true,
                 gallerys: data

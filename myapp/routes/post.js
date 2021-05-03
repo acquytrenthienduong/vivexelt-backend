@@ -115,7 +115,7 @@ router.post('/createPost', function (req, res, next) {
     let post = {
       title: req.body.title,
       short_description: req.body.short_description,
-      long_description: req.body.long_description,
+      link_video: req.body.link_video,
       image_thumbnail: req.file.path,
       seoTitle: req.body.seoTitle,
       createAt: Date.now()
@@ -146,9 +146,9 @@ router.put('/updatePost/:id', middleware.authenticateJWT, function (req, res, ne
     if (req.fileValidationError) {
       return res.send(req.fileValidationError);
     }
-    else if (!req.file) {
-      return res.send('Please select an image to upload');
-    }
+    // else if (!req.file) {
+    //   return res.send('Please select an image to upload');
+    // }
     else if (err instanceof multer.MulterError) {
       return res.send(err);
     }
@@ -159,9 +159,12 @@ router.put('/updatePost/:id', middleware.authenticateJWT, function (req, res, ne
     let post = {
       title: req.body.title,
       short_description: req.body.short_description,
-      long_description: req.body.long_description,
-      image_thumbnail: req.file.path,
+      link_video: req.body.link_video,
       seoTitle: req.body.seoTitle,
+    }
+
+    if (!!req.file) {
+      post.image_thumbnail = req.file.path;
     }
 
     Post.update(post, {

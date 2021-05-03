@@ -11,7 +11,7 @@ module.exports = (sequelize, Sequelize) => {
         short_description: {
             type: Sequelize.STRING
         },
-        long_description: {
+        link_video: {
             type: Sequelize.STRING
         },
         image_thumbnail: {

@@ -150,9 +150,7 @@ router.put('/updateImage/:id', middleware.authenticateJWT, function (req, res, n
         if (req.fileValidationError) {
             return res.send(req.fileValidationError);
         }
-        else if (!req.file) {
-            return res.send('Please select an image to upload');
-        }
+
         else if (err instanceof multer.MulterError) {
             return res.send(err);
         }
@@ -161,9 +159,12 @@ router.put('/updateImage/:id', middleware.authenticateJWT, function (req, res, n
         }
 
         let image = {
-            path: req.file.path,
             position: req.body.position,
             // createAt: Date.now()
+        }
+
+        if (!!req.file) {
+            image.path = req.file.path;
         }
 
         Image.update(image, {

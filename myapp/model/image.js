@@ -8,7 +8,12 @@ module.exports = (sequelize, Sequelize) => {
         path: {
             type: Sequelize.STRING
         },
-
+        position: {
+            type: Sequelize.STRING
+        },
+        createAt: {
+            type: Sequelize.DATE
+        }
     }, {
         sequelize,
         tableName: 'image',

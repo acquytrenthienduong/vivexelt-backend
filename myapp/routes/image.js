@@ -5,7 +5,9 @@ const multer = require("multer");
 const helpers = require('../helper');
 const db = require("../model/index");
 const Image = db.image;
-var path = require('path');
+const path = require('path');
+const fs = require('fs')
+const stream = require('stream')
 
 // const db = require("../model/index");
 // const Post = db.post;
@@ -28,7 +30,10 @@ router.get('/getOne/:id', middleware.authenticateJWT, function (req, res, next) 
     const id = req.params.id
     Image.findByPk(id)
         .then(data => {
-            res.status(200).send(data);
+            res.json({
+                success: true,
+                gallery: data
+            });
         })
         .catch(err => {
             res.status(500).send({
@@ -40,7 +45,10 @@ router.get('/getOne/:id', middleware.authenticateJWT, function (req, res, next) 
 router.get('/getAllImage', middleware.authenticateJWT, function (req, res, next) {
     Image.findAll()
         .then((data) => {
-            res.status(200).send(data);
+            res.json({
+                success: true,
+                gallerys: data
+            });
         })
         .catch(err => {
             res.status(500).send({
@@ -50,14 +58,10 @@ router.get('/getAllImage', middleware.authenticateJWT, function (req, res, next)
         });
 });
 
-
-
 router.post('/upload-one', (req, res) => {
     // 'profile_pic' is the name of our file input field in the HTML form
     let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('profile_pic');
     upload(req, res, function (err) {
-        // req.file contains information of uploaded file
-        // req.body contains information of text fields, if there were any
 
         if (req.fileValidationError) {
             return res.send(req.fileValidationError);
@@ -72,22 +76,23 @@ router.post('/upload-one', (req, res) => {
             return res.send(err);
         }
 
-        // Display uploaded image for user validation
-
         let image = {
-            path: req.file.path
+            path: req.file.path,
+            position: req.body.position,
+            createAt: Date.now()
         }
         Image.create(image)
             .then(() => {
-                res.status(200).send({ message: 'create success' });
-
+                res.json({
+                    success: true,
+                    message: "create success"
+                });
             }).catch((err) => {
                 res.status(500).send({
                     message:
                         err.message || "Some error occurred while creating the post."
                 });
             });
-        res.send(`You have uploaded this image: <hr/><img src="${req.file.path.slice(7)}" width="500"><hr /><a href="./">Upload another image</a>`);
     });
 });
 
@@ -133,27 +138,51 @@ router.post('/upload-multiple', (req, res) => {
     });
 });
 
-router.post('/updateImage/:id', middleware.authenticateJWT, function (req, res, next) {
+router.put('/updateImage/:id', middleware.authenticateJWT, function (req, res, next) {
     const id = req.params.id;
-    Image.update(req.body.image, {
-        where: { id: id }
-    })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "Image was updated successfully."
-                });
-            } else {
-                res.send({
-                    message: `Cannot update Image with id=${id}. Maybe Image was not found or req.body is empty!`
-                });
-            }
+    let upload = multer({ storage: storage }).single('profile_pic');
+    upload(req, res, function (err) {
+        if (req.fileValidationError) {
+            return res.send(req.fileValidationError);
+        }
+        else if (!req.file) {
+            return res.send('Please select an image to upload');
+        }
+        else if (err instanceof multer.MulterError) {
+            return res.send(err);
+        }
+        else if (err) {
+            return res.send(err);
+        }
+
+        let image = {
+            path: req.file.path,
+            position: req.body.position,
+            // createAt: Date.now()
+        }
+
+        Image.update(image, {
+            where: { id: id }
         })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error updating Image with id=" + id
+            .then(num => {
+                if (num == 1) {
+                    res.json({
+                        success: true,
+                        message: "create success"
+                    });
+                } else {
+                    res.json({
+                        success: false,
+                        message: `Cannot update Image with id=${id}. Maybe Image was not found or req.body is empty! or the same`
+                    });
+                }
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Error updating Image with id=" + id
+                });
             });
-        });
+    });
 });
 
 router.post('/deleteImage/:id', middleware.authenticateJWT, function (req, res, next) {
@@ -163,14 +192,28 @@ router.post('/deleteImage/:id', middleware.authenticateJWT, function (req, res, 
     })
         .then((rowDeleted) => { // rowDeleted will return number of rows deleted
             if (rowDeleted === 1) {
-                res.send({
-                    message: "Image was deleted."
+                res.json({
+                    success: true,
+                    message: 'delete success'
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
                 message: "Error delete Image with id=" + id
+            });
+        });
+});
+
+router.get('/sendImage/:id', function (req, res, next) {
+    const id = req.params.id
+    Image.findByPk(id)
+        .then(data => {
+            res.sendFile(__dirname.replace('routes', data.path));
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error retrieving image with id=" + id
             });
         });
 });

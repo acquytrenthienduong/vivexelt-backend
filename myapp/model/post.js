@@ -20,6 +20,9 @@ module.exports = (sequelize, Sequelize) => {
         seoTitle: {
             type: Sequelize.STRING
         },
+        filename: {
+            type: Sequelize.STRING
+        },
         createAt: {
             type: Sequelize.DATE
         }

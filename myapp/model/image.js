@@ -11,6 +11,9 @@ module.exports = (sequelize, Sequelize) => {
         position: {
             type: Sequelize.STRING
         },
+        filename: {
+            type: Sequelize.STRING
+        },
         createAt: {
             type: Sequelize.DATE
         }

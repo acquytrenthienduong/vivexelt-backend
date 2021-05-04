@@ -102,12 +102,13 @@ router.post('/createPost', function (req, res, next) {
     else if (err) {
       return res.send(err);
     }
-
+    console.log('req');
     let post = {
       title: req.body.title,
       short_description: req.body.short_description,
       link_video: req.body.link_video,
       image_thumbnail: req.file.path,
+      filename: req.file.filename.split('.')[0],
       seoTitle: req.body.seoTitle,
       createAt: Date.now()
     }
@@ -126,7 +127,6 @@ router.post('/createPost', function (req, res, next) {
         });
       });
   });
-
 
 });
 
@@ -156,6 +156,7 @@ router.put('/updatePost/:id', middleware.authenticateJWT, function (req, res, ne
 
     if (!!req.file) {
       post.image_thumbnail = req.file.path;
+      post.filename = req.file.filename.split('.')[0];
     }
 
     Post.update(post, {
@@ -247,10 +248,16 @@ router.get('/search/:page/:limit/:keyword', middleware.authenticateJWT, function
     });
 });
 
-router.get('/sendImagePost/:id', function (req, res, next) {
-  const id = req.params.id
-  Post.findByPk(id)
+router.get('/sendImagePost/:filename', function (req, res, next) {
+  const filename = req.params.filename
+  console.log('filename', filename);
+  Post.findOne({
+    where: {
+      filename: filename
+    }
+  })
     .then(data => {
+      console.log('data', data);
       res.sendFile(__dirname.replace('routes', data.image_thumbnail));
     })
     .catch(err => {

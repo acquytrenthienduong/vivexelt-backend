@@ -82,6 +82,7 @@ router.post('/upload-one', (req, res) => {
         let image = {
             path: req.file.path,
             position: req.body.position,
+            filename: req.file.filename.split('.')[0],
             createAt: Date.now()
         }
         Image.create(image)
@@ -163,6 +164,7 @@ router.put('/updateImage/:id', middleware.authenticateJWT, function (req, res, n
 
         if (!!req.file) {
             image.path = req.file.path;
+            image.filename = req.file.filename.split('.')[0];
         }
 
         Image.update(image, {
@@ -209,9 +211,13 @@ router.post('/deleteImage/:id', middleware.authenticateJWT, function (req, res, 
         });
 });
 
-router.get('/sendImage/:id', function (req, res, next) {
-    const id = req.params.id
-    Image.findByPk(id)
+router.get('/sendImage/:filename', function (req, res, next) {
+    const filename = req.params.filename
+    Image.findOne({
+        where: {
+            filename: filename
+        }
+    })
         .then(data => {
             res.sendFile(__dirname.replace('routes', data.path));
         })

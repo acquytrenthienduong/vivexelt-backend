@@ -45,7 +45,7 @@ db.sequelize.sync();
 app.use('/', indexRouter);
 app.use('/post', postRouter);
 app.use('/image', imageRouter);
-app.use('/image', publicRouter);
+app.use('/public', publicRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -6,8 +6,6 @@ const helpers = require('../helper');
 const db = require("../model/index");
 const Image = db.image;
 const path = require('path');
-const fs = require('fs')
-const stream = require('stream')
 
 // const db = require("../model/index");
 // const Post = db.post;

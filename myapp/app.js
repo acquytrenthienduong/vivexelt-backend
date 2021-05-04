@@ -12,6 +12,7 @@ const multer = require("multer");
 var indexRouter = require('./routes/index');
 var postRouter = require('./routes/post');
 var imageRouter = require('./routes/image');
+var publicRouter = require('./routes/public');
 
 var app = express();
 
@@ -44,6 +45,7 @@ db.sequelize.sync();
 app.use('/', indexRouter);
 app.use('/post', postRouter);
 app.use('/image', imageRouter);
+app.use('/image', publicRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

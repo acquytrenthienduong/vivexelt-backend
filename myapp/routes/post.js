@@ -44,9 +44,6 @@ router.get('/getAllPost/:page/:limit', middleware.authenticateJWT, function (req
   const page = req.params.page
   const limit = req.params.limit
 
-  console.log('page', page);
-  console.log('limit', limit);
-
   var offset = 0;
   if (parseInt(page, 10) < 2) {
     offset = 0;
@@ -54,8 +51,6 @@ router.get('/getAllPost/:page/:limit', middleware.authenticateJWT, function (req
   else {
     offset = parseInt(page, 10) - 1;
   }
-  console.log('offset', offset);
-
   Post.findAll({})
     .then((data) => {
       const length = data.length
@@ -88,9 +83,6 @@ router.get('/getAllPost/:page/:limit', middleware.authenticateJWT, function (req
           err.message || "Some error occurred while post"
       });
     });
-
-
-
 });
 
 

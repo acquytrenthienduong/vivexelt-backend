@@ -85,7 +85,6 @@ router.get('/getAllPost/:page/:limit', middleware.authenticateJWT, function (req
     });
 });
 
-
 router.post('/createPost', function (req, res, next) {
   let upload = multer({
     storage: storage, limits: { fileSize: 2 * 1024 * 1024 }
@@ -206,10 +205,26 @@ router.post('/deletePost/:id', middleware.authenticateJWT, function (req, res, n
     });
 });
 
-router.get('/search/:keyword', middleware.authenticateJWT, function (req, res, next) {
+router.get('/search/:page/:limit/:keyword', middleware.authenticateJWT, function (req, res, next) {
   let keyword = req.params.keyword
+  const page = req.params.page
+  const limit = req.params.limit
 
+  var offset = 0;
+  if (parseInt(page, 10) < 2) {
+    offset = 0;
+  }
+  else {
+    offset = parseInt(page, 10) - 1;
+  }
   Post.findAll(
+    {
+      offset: offset * parseInt(limit, 10),
+      limit: parseInt(limit, 10),
+      order: [
+        ['createAt', 'DESC'],
+      ],
+    },
     {
       where: {
         seoTitle: {

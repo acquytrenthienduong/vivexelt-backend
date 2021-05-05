@@ -38,15 +38,15 @@ const operatorsAliases = {
     $col: Op.col
 };
 
-const sequelize = new Sequelize('vivexelt', 'minh', 'Abc12346@@', {
-    host: 'localhost',
-    dialect: 'mysql',
+const sequelize = new Sequelize(process.env.DB, process.env.USER, process.env.PASSWORD, {
+    host: process.env.HOST,
+    dialect: process.env.DIALECT,
     operatorsAliases: operatorsAliases,
     pool: {
         max: 5,
         min: 0,
-        acquire: 30000,
-        idle: 10000
+        acquire: process.env.ACQUIRE,
+        idle: process.env.IDLE
     }
 });
 

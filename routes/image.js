@@ -34,9 +34,7 @@ router.get('/get-one/:id', middleware.authenticateJWT, function (req, res, next)
             });
         })
         .catch(err => {
-            res.status(500).send({
-                message: "Error retrieving image with id=" + id
-            });
+            console.log(err);
         });
 });
 
@@ -54,10 +52,7 @@ router.get('/get-all-image', middleware.authenticateJWT, function (req, res, nex
             });
         })
         .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while Image"
-            });
+            console.log(err);
         });
 });
 
@@ -81,7 +76,7 @@ router.post('/upload-one', (req, res) => {
         let image = {
             path: req.file.path,
             position: req.body.position,
-            filename: req.file.filename.split('.')[0],
+            filename: req.file.filename,
             createAt: Date.now()
         }
         Image.create(image)
@@ -91,10 +86,7 @@ router.post('/upload-one', (req, res) => {
                     message: "create success"
                 });
             }).catch((err) => {
-                res.status(500).send({
-                    message:
-                        err.message || "Some error occurred while creating the post."
-                });
+                console.log(err);
             });
     });
 });
@@ -129,10 +121,7 @@ router.post('/upload-multiple', (req, res) => {
                     res.status(200).send({ message: 'create success' });
 
                 }).catch((err) => {
-                    res.status(500).send({
-                        message:
-                            err.message || "Some error occurred while creating the post."
-                    });
+                    console.log(err);
                 });
             result += `<img src="${files[index].path.slice(7)}" width="300" style="margin-right: 20px;">`;
         }
@@ -163,7 +152,7 @@ router.put('/update-image/:id', middleware.authenticateJWT, function (req, res, 
 
         if (!!req.file) {
             image.path = req.file.path;
-            image.filename = req.file.filename.split('.')[0];
+            image.filename = req.file.filename;
         }
 
         Image.update(image, {
@@ -183,9 +172,7 @@ router.put('/update-image/:id', middleware.authenticateJWT, function (req, res, 
                 }
             })
             .catch(err => {
-                res.status(500).send({
-                    message: "Error updating Image with id=" + id
-                });
+                console.log(err);
             });
     });
 });
@@ -204,9 +191,7 @@ router.post('/delete-image/:id', middleware.authenticateJWT, function (req, res,
             }
         })
         .catch(err => {
-            res.status(500).send({
-                message: "Error delete Image with id=" + id
-            });
+            console.log(err);
         });
 });
 
@@ -221,9 +206,7 @@ router.get('/send-image/:filename', function (req, res, next) {
             res.sendFile(__dirname.replace('routes', data.path));
         })
         .catch(err => {
-            res.status(500).send({
-                message: "Error retrieving image with id=" + id
-            });
+            console.log(err);
         });
 });
 module.exports = router;

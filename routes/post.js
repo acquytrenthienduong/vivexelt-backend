@@ -33,11 +33,8 @@ router.get('/get-one-post/:id', middleware.authenticateJWT, function (req, res, 
         post: data
       });
     })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error retrieving post with id=" + id
-      });
-    });
+    console.log(err);
+
 });
 
 router.get('/get-all-posts', middleware.authenticateJWT, function (req, res, next) {
@@ -75,24 +72,22 @@ router.get('/get-all-posts', middleware.authenticateJWT, function (req, res, nex
       }
       )
         .then((data) => {
+          // setTimeout(() => {
           res.json({
             success: true,
             total: length,
             posts: data
           });
+          // }, 30000)
         })
         .catch(err => {
-          res.status(500).send({
-            message:
-              err.message || "Some error occurred while post"
-          });
+          console.log(err);
+
         });
     })
     .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while post"
-      });
+      console.log(err);
+
     });
 });
 
@@ -119,7 +114,7 @@ router.post('/create-post', function (req, res, next) {
       short_description: req.body.short_description,
       link_video: req.body.link_video,
       image_thumbnail: req.file.path,
-      filename: req.file.filename.split('.')[0],
+      filename: req.file.filename,
       seoTitle: req.body.seoTitle,
       createAt: Date.now()
     }
@@ -132,10 +127,8 @@ router.post('/create-post', function (req, res, next) {
         });
       })
       .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while creating the post."
-        });
+        console.log(err);
+
       });
   });
 
@@ -167,7 +160,7 @@ router.put('/update-post/:id', middleware.authenticateJWT, function (req, res, n
 
     if (!!req.file) {
       post.image_thumbnail = req.file.path;
-      post.filename = req.file.filename.split('.')[0];
+      post.filename = req.file.filename;
     }
 
     Post.update(post, {
@@ -187,9 +180,8 @@ router.put('/update-post/:id', middleware.authenticateJWT, function (req, res, n
         }
       })
       .catch(err => {
-        res.status(500).send({
-          message: "Error updating Post with id=" + id
-        });
+        console.log(err);
+
       });
   });
 });
@@ -211,9 +203,8 @@ router.post('/delete-post/:id', middleware.authenticateJWT, function (req, res, 
       }
     })
     .catch(err => {
-      res.status(500).send({
-        message: "Error delete Post with id=" + id
-      });
+      console.log(err);
+
     });
 });
 
@@ -252,30 +243,13 @@ router.get('/search/:page/:limit/:keyword', middleware.authenticateJWT, function
       });
     })
     .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while searching the post."
-      });
+      console.log(err);
+
     });
 });
 
 router.get('/send-image-post/:filename', function (req, res, next) {
-  const filename = req.params.filename
-  console.log('filename', filename);
-  Post.findOne({
-    where: {
-      filename: filename
-    }
-  })
-    .then(data => {
-      console.log('data', data);
-      res.sendFile(__dirname.replace('routes', data.image_thumbnail));
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error retrieving image with id=" + id
-      });
-    });
+  res.sendFile(__dirname.replace('routes', 'public\\images\\' + filename));
 });
 
 module.exports = router;

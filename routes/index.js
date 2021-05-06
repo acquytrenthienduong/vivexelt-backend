@@ -30,10 +30,8 @@ router.get('/', middleware.authenticateJWT, function (req, res, next) {
       res.status(200).send(data);
     })
     .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while user"
-      });
+      console.log(err);
+
     });
 });
 
@@ -87,10 +85,8 @@ router.post('/create', (req, res) => {
           })
         })
         .catch(err => {
-          res.status(500).send({
-            message:
-              err.message || "Some error occurred while creating the user."
-          });
+          console.log(err);
+
         });
     })
 })

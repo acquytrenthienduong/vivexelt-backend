@@ -24,7 +24,7 @@ router.get('/', middleware.authenticateJWT, function (req, res, next) {
   res.json('test');
 });
 
-router.get('/getOnePost/:id', middleware.authenticateJWT, function (req, res, next) {
+router.get('/get-one-post/:id', middleware.authenticateJWT, function (req, res, next) {
   const id = req.params.id
   Post.findByPk(id)
     .then(data => {
@@ -40,9 +40,10 @@ router.get('/getOnePost/:id', middleware.authenticateJWT, function (req, res, ne
     });
 });
 
-router.get('/getAllPost/:page/:limit', middleware.authenticateJWT, function (req, res, next) {
-  const page = req.params.page
-  const limit = req.params.limit
+router.get('/get-all-posts', middleware.authenticateJWT, function (req, res, next) {
+  const page = req.query.id || 1;
+  const limit = req.query.limit || 50
+  const search = req.query.search || '';
 
   var offset = 0;
   if (parseInt(page, 10) < 2) {
@@ -61,7 +62,13 @@ router.get('/getAllPost/:page/:limit', middleware.authenticateJWT, function (req
           order: [
             ['createAt', 'DESC'],
           ],
+        }, {
+        where: {
+          seoTitle: {
+            [Op.like]: '%' + search + '%'
+          }
         }
+      }
       )
         .then((data) => {
           res.json({
@@ -85,10 +92,10 @@ router.get('/getAllPost/:page/:limit', middleware.authenticateJWT, function (req
     });
 });
 
-router.post('/createPost', function (req, res, next) {
+router.post('/create-post', function (req, res, next) {
   let upload = multer({
     storage: storage, limits: { fileSize: 2 * 1024 * 1024 }
-  }).single('profile_pic');
+  }).single('vivexelt_pic');
   upload(req, res, function (err) {
     if (req.fileValidationError) {
       return res.send(req.fileValidationError);
@@ -130,9 +137,9 @@ router.post('/createPost', function (req, res, next) {
 
 });
 
-router.put('/updatePost/:id', middleware.authenticateJWT, function (req, res, next) {
+router.put('/update-post/:id', middleware.authenticateJWT, function (req, res, next) {
   const id = req.params.id;
-  let upload = multer({ storage: storage, limits: { fileSize: 2 * 1024 * 1024 } }).single('profile_pic');
+  let upload = multer({ storage: storage, limits: { fileSize: 2 * 1024 * 1024 } }).single('vivexelt_pic');
   upload(req, res, function (err) {
     if (req.fileValidationError) {
       return res.send(req.fileValidationError);
@@ -183,7 +190,7 @@ router.put('/updatePost/:id', middleware.authenticateJWT, function (req, res, ne
   });
 });
 
-router.post('/deletePost/:id', middleware.authenticateJWT, function (req, res, next) {
+router.post('/delete-post/:id', middleware.authenticateJWT, function (req, res, next) {
   const id = req.params.id;
   console.log('req.params.id', req.params.id);
 
@@ -248,7 +255,7 @@ router.get('/search/:page/:limit/:keyword', middleware.authenticateJWT, function
     });
 });
 
-router.get('/sendImagePost/:filename', function (req, res, next) {
+router.get('/send-image-post/:filename', function (req, res, next) {
   const filename = req.params.filename
   console.log('filename', filename);
   Post.findOne({

@@ -24,7 +24,7 @@ router.get('/', function (req, res, next) {
     res.render('upload.ejs');
 });
 
-router.get('/getOne/:id', middleware.authenticateJWT, function (req, res, next) {
+router.get('/get-one/:id', middleware.authenticateJWT, function (req, res, next) {
     const id = req.params.id
     Image.findByPk(id)
         .then(data => {
@@ -40,7 +40,7 @@ router.get('/getOne/:id', middleware.authenticateJWT, function (req, res, next) 
         });
 });
 
-router.get('/getAllImage', middleware.authenticateJWT, function (req, res, next) {
+router.get('/get-all-image', middleware.authenticateJWT, function (req, res, next) {
     Image.findAll({
         order: [
             ['position', 'ASC'],
@@ -62,8 +62,7 @@ router.get('/getAllImage', middleware.authenticateJWT, function (req, res, next)
 });
 
 router.post('/upload-one', (req, res) => {
-    // 'profile_pic' is the name of our file input field in the HTML form
-    let upload = multer({ storage: storage, fileFilter: helpers.imageFilter, limits: { fileSize: 2 * 1024 * 1024 } }).single('profile_pic');
+    let upload = multer({ storage: storage, fileFilter: helpers.imageFilter, limits: { fileSize: 2 * 1024 * 1024 } }).single('vivexelt_pic');
     upload(req, res, function (err) {
 
         if (req.fileValidationError) {
@@ -142,9 +141,9 @@ router.post('/upload-multiple', (req, res) => {
     });
 });
 
-router.put('/updateImage/:id', middleware.authenticateJWT, function (req, res, next) {
+router.put('/update-image/:id', middleware.authenticateJWT, function (req, res, next) {
     const id = req.params.id;
-    let upload = multer({ storage: storage, limits: { fileSize: 2 * 1024 * 1024 } }).single('profile_pic');
+    let upload = multer({ storage: storage, limits: { fileSize: 2 * 1024 * 1024 } }).single('vivexelt_pic');
     upload(req, res, function (err) {
         if (req.fileValidationError) {
             return res.send(req.fileValidationError);
@@ -191,7 +190,7 @@ router.put('/updateImage/:id', middleware.authenticateJWT, function (req, res, n
     });
 });
 
-router.post('/deleteImage/:id', middleware.authenticateJWT, function (req, res, next) {
+router.post('/delete-image/:id', middleware.authenticateJWT, function (req, res, next) {
     const id = req.params.id;
     Image.destroy({
         where: { id: id }
@@ -211,7 +210,7 @@ router.post('/deleteImage/:id', middleware.authenticateJWT, function (req, res, 
         });
 });
 
-router.get('/sendImage/:filename', function (req, res, next) {
+router.get('/send-image/:filename', function (req, res, next) {
     const filename = req.params.filename
     Image.findOne({
         where: {

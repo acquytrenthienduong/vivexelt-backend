@@ -7,6 +7,8 @@ var logger = require('morgan');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 var cors = require('cors');
+var timeout = require('connect-timeout')
+
 // require('dotenv').config({ path: __dirname + '/./../../.env' })
 
 // var indexRouter = require('./routes/index');
@@ -24,7 +26,7 @@ const db = require("./model/index");
 
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public'))); //  "public" off of current is root
-
+app.use(timeout('30s'))
 app.set('view engine', 'pug');
 
 app.use(logger('dev'));

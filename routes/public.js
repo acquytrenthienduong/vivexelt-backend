@@ -23,7 +23,7 @@ router.get('/get-all-image-gallery', function (req, res, next) {
     });
 });
 
-router.get('/get-all-public-posts', function (req, res, next) {
+router.get('/get-videos', function (req, res, next) {
   const page = req.query.page || 1;
   const limit = req.query.limit || 50
   const search = req.query.search || '';

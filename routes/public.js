@@ -3,6 +3,7 @@ var router = express.Router();
 const db = require("../model/index");
 const Image = db.image;
 const Post = db.post
+const Op = db.Sequelize.Op;
 
 router.get('/get-all-image-gallery', function (req, res, next) {
   Image.findAll({
@@ -18,8 +19,7 @@ router.get('/get-all-image-gallery', function (req, res, next) {
       });
     })
     .catch(err => {
-      console.log(err);
-
+      console.log('err khi get all gallery for enduser');
     });
 });
 
@@ -36,9 +36,6 @@ router.get('/get-all-public-posts', function (req, res, next) {
     offset = parseInt(page, 10) - 1;
   }
 
-  console.log('page', page);
-  console.log('limit', limit);
-
   Post.findAll({})
     .then((data) => {
       const length = data.length
@@ -47,7 +44,7 @@ router.get('/get-all-public-posts', function (req, res, next) {
           offset: offset * parseInt(limit, 10),
           limit: parseInt(limit, 10),
           order: [
-            ['createAt', 'DESC'],
+            ['id', 'DESC'],
           ],
         }, {
         where: {
@@ -67,12 +64,12 @@ router.get('/get-all-public-posts', function (req, res, next) {
           // }, 30000)
         })
         .catch(err => {
-          console.log(err);
+          console.log('err khi get all post for enduser');
 
         });
     })
     .catch(err => {
-      console.log(err);
+      console.log('err khi get all post for enduser');
 
     });
 });

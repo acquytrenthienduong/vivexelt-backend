@@ -34,7 +34,7 @@ router.get('/get-one/:id', middleware.authenticateJWT, function (req, res, next)
             });
         })
         .catch(err => {
-            console.log(err);
+            console.log('err khi thuc hien get one');
         });
 });
 
@@ -52,7 +52,7 @@ router.get('/get-all-image', middleware.authenticateJWT, function (req, res, nex
             });
         })
         .catch(err => {
-            console.log(err);
+            console.log('err khi thuc hien get all image gallery');
         });
 });
 
@@ -89,7 +89,7 @@ router.post('/upload-one', (req, res) => {
                     message: "create success"
                 });
             }).catch((err) => {
-                console.log(err);
+                console.log('err khi thuc hien create gallery');
             });
     });
 });
@@ -176,7 +176,7 @@ router.put('/update-image/:id', middleware.authenticateJWT, function (req, res, 
                 }
             })
             .catch(err => {
-                console.log(err);
+                console.log('err khi update gallery');
             });
     });
 });
@@ -195,7 +195,7 @@ router.post('/delete-image/:id', middleware.authenticateJWT, function (req, res,
             }
         })
         .catch(err => {
-            console.log(err);
+            console.log('err khi delete gallery');
         });
 });
 

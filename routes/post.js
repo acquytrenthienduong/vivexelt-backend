@@ -26,7 +26,11 @@ router.get('/', middleware.authenticateJWT, function (req, res, next) {
 
 router.get('/get-one-post/:id', middleware.authenticateJWT, function (req, res, next) {
   const id = req.params.id
-  Post.findByPk(id)
+  Post.findByPk(id, {
+    order: [
+      ['id', 'DESC'],
+    ],
+  })
     .then(data => {
       res.json({
         success: true,
@@ -34,7 +38,7 @@ router.get('/get-one-post/:id', middleware.authenticateJWT, function (req, res, 
       });
     })
     .catch(err => {
-      console.log(err);
+      console.log('err khi get one post');
 
     });
 });
@@ -63,7 +67,7 @@ router.get('/get-all-posts', middleware.authenticateJWT, function (req, res, nex
           offset: offset * parseInt(limit, 10),
           limit: parseInt(limit, 10),
           order: [
-            ['createAt', 'DESC'],
+            ['id', 'DESC'],
           ],
         }, {
         where: {
@@ -88,7 +92,7 @@ router.get('/get-all-posts', middleware.authenticateJWT, function (req, res, nex
         });
     })
     .catch(err => {
-      console.log(err);
+      console.log('err khi get all post');
 
     });
 });
@@ -129,7 +133,7 @@ router.post('/create-post', function (req, res, next) {
         });
       })
       .catch(err => {
-        console.log(err);
+        console.log('err khi create post');
 
       });
   });
@@ -183,7 +187,7 @@ router.put('/update-post/:id', middleware.authenticateJWT, function (req, res, n
         }
       })
       .catch(err => {
-        console.log(err);
+        console.log('err khi update post');
 
       });
   });
@@ -206,7 +210,7 @@ router.post('/delete-post/:id', middleware.authenticateJWT, function (req, res, 
       }
     })
     .catch(err => {
-      console.log(err);
+      console.log('err khi delete post');
 
     });
 });
@@ -228,7 +232,7 @@ router.get('/search/:page/:limit/:keyword', middleware.authenticateJWT, function
       offset: offset * parseInt(limit, 10),
       limit: parseInt(limit, 10),
       order: [
-        ['createAt', 'DESC'],
+        ['id', 'DESC'],
       ],
     },
     {

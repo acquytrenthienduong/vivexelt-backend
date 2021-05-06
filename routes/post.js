@@ -41,7 +41,7 @@ router.get('/get-one-post/:id', middleware.authenticateJWT, function (req, res, 
 });
 
 router.get('/get-all-posts', middleware.authenticateJWT, function (req, res, next) {
-  const page = req.query.id || 1;
+  const page = req.query.page || 1;
   const limit = req.query.limit || 50
   const search = req.query.search || '';
 
@@ -52,6 +52,10 @@ router.get('/get-all-posts', middleware.authenticateJWT, function (req, res, nex
   else {
     offset = parseInt(page, 10) - 1;
   }
+
+  console.log('page', page);
+  console.log('limit', limit);
+
   Post.findAll({})
     .then((data) => {
       const length = data.length

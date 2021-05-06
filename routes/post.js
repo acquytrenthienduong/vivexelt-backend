@@ -110,7 +110,7 @@ router.post('/create-post', function (req, res, next) {
     else if (err) {
       return res.send(err);
     }
-    console.log('path image: ', req.file.path);
+    console.log('path image: ', __dirname + req.file.path);
     let post = {
       title: req.body.title,
       short_description: req.body.short_description,
@@ -163,7 +163,7 @@ router.put('/update-post/:id', middleware.authenticateJWT, function (req, res, n
     if (!!req.file) {
       post.image_thumbnail = req.file.path;
       post.filename = req.file.filename;
-      console.log('path image: ', req.file.path);
+      console.log('path image: ', __dirname + req.file.path);
     }
 
     Post.update(post, {

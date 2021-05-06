@@ -33,8 +33,10 @@ router.get('/get-one-post/:id', middleware.authenticateJWT, function (req, res, 
         post: data
       });
     })
-    console.log(err);
+    .catch(err => {
+      console.log(err);
 
+    });
 });
 
 router.get('/get-all-posts', middleware.authenticateJWT, function (req, res, next) {
@@ -248,8 +250,8 @@ router.get('/search/:page/:limit/:keyword', middleware.authenticateJWT, function
     });
 });
 
-router.get('/send-image-post/:filename', function (req, res, next) {
-  res.sendFile(__dirname.replace('routes', 'public\\images\\' + filename));
-});
+// router.get('/send-image/:filename', function (req, res, next) {
+//   res.sendFile(__dirname.replace('routes', 'public\\images\\' + filename));
+// });
 
 module.exports = router;

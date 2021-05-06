@@ -195,18 +195,18 @@ router.post('/delete-image/:id', middleware.authenticateJWT, function (req, res,
         });
 });
 
-router.get('/send-image/:filename', function (req, res, next) {
-    const filename = req.params.filename
-    Image.findOne({
-        where: {
-            filename: filename
-        }
-    })
-        .then(data => {
-            res.sendFile(__dirname.replace('routes', data.path));
-        })
-        .catch(err => {
-            console.log(err);
-        });
-});
+// router.get('/send-image/:filename', function (req, res, next) {
+//     const filename = req.params.filename
+//     Image.findOne({
+//         where: {
+//             filename: filename
+//         }
+//     })
+//         .then(data => {
+//             res.sendFile(__dirname.replace('routes', data.path));
+//         })
+//         .catch(err => {
+//             console.log(err);
+//         });
+// });
 module.exports = router;

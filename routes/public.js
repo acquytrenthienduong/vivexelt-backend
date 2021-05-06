@@ -79,6 +79,7 @@ router.get('/get-all-public-posts', function (req, res, next) {
 
 router.get('/send-image/:filename', function (req, res, next) {
   const filename = req.params.filename;
+  console.log('path: ', __dirname.replace('routes', 'public\\images\\' + filename));
   res.sendFile(__dirname.replace('routes', 'public\\images\\' + filename));
 });
 module.exports = router;

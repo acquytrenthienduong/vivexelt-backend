@@ -79,6 +79,9 @@ router.post('/upload-one', (req, res) => {
             filename: req.file.filename,
             createAt: Date.now()
         }
+
+        console.log('path image: ', req.file.path);
+
         Image.create(image)
             .then(() => {
                 res.json({
@@ -153,6 +156,7 @@ router.put('/update-image/:id', middleware.authenticateJWT, function (req, res, 
         if (!!req.file) {
             image.path = req.file.path;
             image.filename = req.file.filename;
+            console.log('path image: ', req.file.path);
         }
 
         Image.update(image, {

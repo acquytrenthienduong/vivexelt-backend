@@ -38,7 +38,7 @@ router.get('/get-one-post/:id', middleware.authenticateJWT, function (req, res, 
       });
     })
     .catch(err => {
-      console.log('err khi get one post');
+      console.log('err khi get one post', err);
 
     });
 });
@@ -59,42 +59,71 @@ router.get('/get-all-posts', middleware.authenticateJWT, function (req, res, nex
   console.log('page', page);
   console.log('limit', limit);
 
-  Post.findAll({})
-    .then((data) => {
-      const length = data.length
-      Post.findAll(
-        {
-          offset: offset * parseInt(limit, 10),
-          limit: parseInt(limit, 10),
-          order: [
-            ['id', 'DESC'],
-          ],
-        }, {
-        where: {
-          seoTitle: {
-            [Op.like]: '%' + search + '%'
-          }
-        }
-      }
-      )
-        .then((data) => {
-          // setTimeout(() => {
-          res.json({
-            success: true,
-            total: length,
-            posts: data
-          });
-          // }, 30000)
-        })
-        .catch(err => {
-          console.log(err);
 
-        });
+  Post
+    .findAndCountAll({
+      where: {
+        title: {
+          [Op.like]: '%' + search + '%'
+        }
+      },
+      offset: offset * parseInt(limit, 10),
+      limit: parseInt(limit, 10),
+      order: [
+        ['id', 'DESC'],
+      ],
+    })
+    .then(result => {
+      // console.log(result.count);
+      // console.log(result.rows);
+      res.json({
+        success: true,
+        total: result.count,
+        posts: result.rows
+      });
     })
     .catch(err => {
-      console.log('err khi get all post');
-
+      console.log('err khi get all post', err);
     });
+
+
+
+  // Post.findAll({})
+  //   .then((data) => {
+  //     const length = data.length
+  //     Post.findAll(
+  //       {
+  //         offset: offset * parseInt(limit, 10),
+  //         limit: parseInt(limit, 10),
+  //         order: [
+  //           ['id', 'DESC'],
+  //         ],
+  //       }, {
+  //       where: {
+  //         seoTitle: {
+  //           [Op.like]: '%' + search + '%'
+  //         }
+  //       }
+  //     }
+  //     )
+  //       .then((data) => {
+  //         // setTimeout(() => {
+  //         res.json({
+  //           success: true,
+  //           total: length,
+  //           posts: data
+  //         });
+  //         // }, 30000)
+  //       })
+  //       .catch(err => {
+  //         console.log(err);
+
+  //       });
+  //   })
+  //   .catch(err => {
+  //     console.log('err khi get all post');
+
+  //   });
 });
 
 router.post('/create-post', function (req, res, next) {
@@ -133,8 +162,7 @@ router.post('/create-post', function (req, res, next) {
         });
       })
       .catch(err => {
-        console.log('err khi create post');
-
+        console.log('err khi create post', err);
       });
   });
 
@@ -187,7 +215,7 @@ router.put('/update-post/:id', middleware.authenticateJWT, function (req, res, n
         }
       })
       .catch(err => {
-        console.log('err khi update post');
+        console.log('err khi update post', err);
 
       });
   });
@@ -210,7 +238,7 @@ router.post('/delete-post/:id', middleware.authenticateJWT, function (req, res, 
       }
     })
     .catch(err => {
-      console.log('err khi delete post');
+      console.log('err khi delete post', err);
 
     });
 });
@@ -251,7 +279,6 @@ router.get('/search/:page/:limit/:keyword', middleware.authenticateJWT, function
     })
     .catch(err => {
       console.log(err);
-
     });
 });
 

@@ -5,7 +5,7 @@ var timeout = require('connect-timeout')
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 var cors = require('cors');
 //console.log(__dirname);
@@ -36,20 +36,20 @@ app.use(cookieParser());
 
 
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cors());
 
 db.sequelize.sync();
 
+app.use(timeout(30000));
 app.use('/', indexRouter);
 app.use('/post', postRouter);
 app.use('/image', imageRouter);
 app.use('/public', publicRouter);
 
-// app.use(timeout(5000));
-// app.use(haltOnTimedout)
+app.use(haltOnTimedout)
 function haltOnTimedout (req, res, next) {
   if (!req.timedout) next()
 }

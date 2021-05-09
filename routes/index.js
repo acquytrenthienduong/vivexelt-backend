@@ -68,27 +68,4 @@ router.post('/login', (req, res) => {
     })
 });
 
-router.post('/create', (req, res) => {
-  const { username, password } = req.body;
-
-  bcrypt.hash(password.toString(), 10)
-    .then((hash) => {
-      let user = {
-        username: username,
-        password: hash,
-      };
-
-      User.create(user)
-        .then(() => {
-          res.send({
-            message: 'create success'
-          })
-        })
-        .catch(err => {
-          console.log(err);
-
-        });
-    })
-})
-
 module.exports = router;
